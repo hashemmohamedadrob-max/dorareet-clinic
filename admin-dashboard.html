@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة التحكم | عيادة دوراريت</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .dash-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .dash-wrap {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+  }
+  .dash-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.6rem;
+    color: var(--teal-deep);
+    margin: 0;
+  }
+  .btn-logout {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.85rem;
+    background: transparent;
+    border: 1.5px solid var(--line);
+    color: var(--teal-deep);
+    padding: 9px 18px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .btn-logout:hover { background: var(--seafoam-dark); }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    margin: 28px 0;
+  }
+  .stat-card {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 18px 20px;
+  }
+  .stat-card .num {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.6rem;
+    color: var(--teal-deep);
+  }
+  .stat-card .label {
+    font-size: 0.82rem;
+    color: var(--teal-soft);
+  }
+
+  .table-card {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  thead { background: var(--seafoam-dark); }
+  th, td {
+    padding: 14px 16px;
+    text-align: right;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+  }
+  th { font-family: var(--font-display); font-weight: 700; color: var(--teal-deep); }
+  tbody tr:hover { background: var(--seafoam); }
+  .btn-cancel {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: #B3453B;
+    background: transparent;
+    border: 1.5px solid #E9C9C5;
+    border-radius: 999px;
+    padding: 6px 14px;
+    cursor: pointer;
+  }
+  .btn-cancel:hover { background: #FBEEED; }
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--teal-soft);
+  }
+  .table-scroll { overflow-x: auto; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <div class="brand-text">
+        <span class="brand-name">عيادة دوراريت</span>
+        <span class="brand-sub">لوحة التحكم</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="dash-wrap">
+  <div class="dash-header">
+    <h1 class="dash-title">الحجوزات الحالية</h1>
+    <button class="btn-logout" id="logout-btn">تسجيل الخروج</button>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="num" id="stat-total">0</div>
+      <div class="label">إجمالي الحجوزات</div>
+    </div>
+    <div class="stat-card">
+      <div class="num" id="stat-today">0</div>
+      <div class="label">حجوزات اليوم</div>
+    </div>
+    <div class="stat-card">
+      <div class="num" id="stat-doctors">4</div>
+      <div class="label">أطباء نشطون</div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <div class="table-scroll">
+      <table id="appointments-table">
+        <thead>
+          <tr>
+            <th>المريض</th>
+            <th>الهاتف</th>
+            <th>الطبيب</th>
+            <th>التخصص</th>
+            <th>التاريخ</th>
+            <th>الوقت</th>
+            <th>ملاحظات</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="appointments-body"></tbody>
+      </table>
+    </div>
+    <div id="empty-state" class="empty-state" style="display:none;">لا توجد حجوزات حتى الآن.</div>
+  </div>
+</div>
+
+<script>
+async function checkAuth() {
+  const res = await fetch('/api/admin/session');
+  const data = await res.json();
+  if (!data.isAdmin) {
+    window.location.href = '/admin-login.html';
+  }
+}
+
+function formatTime(t) {
+  const [h, m] = t.split(':');
+  const hour = parseInt(h, 10);
+  const period = hour >= 12 ? 'مساءً' : 'صباحاً';
+  const hour12 = hour % 12 === 0 ? 12 : hour % 12;
+  return `${hour12}:${m} ${period}`;
+}
+
+async function loadAppointments() {
+  const res = await fetch('/api/admin/appointments');
+  const data = await res.json();
+
+  if (!data.success) return;
+
+  const tbody = document.getElementById('appointments-body');
+  const emptyState = document.getElementById('empty-state');
+  const table = document.getElementById('appointments-table');
+
+  tbody.innerHTML = '';
+
+  document.getElementById('stat-total').textContent = data.appointments.length;
+
+  const todayStr = new Date().toISOString().split('T')[0];
+  const todayCount = data.appointments.filter(a => a.appointment_date.startsWith(todayStr)).length;
+  document.getElementById('stat-today').textContent = todayCount;
+
+  if (data.appointments.length === 0) {
+    table.style.display = 'none';
+    emptyState.style.display = 'block';
+    return;
+  }
+
+  table.style.display = 'table';
+  emptyState.style.display = 'none';
+
+  data.appointments.forEach(appt => {
+    const row = document.createElement('tr');
+    const dateOnly = appt.appointment_date.split('T')[0];
+
+    row.innerHTML = `
+      <td>${appt.patient_name}</td>
+      <td>${appt.phone}</td>
+      <td>${appt.doctor_name}</td>
+      <td>${appt.doctor_specialty}</td>
+      <td>${dateOnly}</td>
+      <td>${formatTime(appt.appointment_time)}</td>
+      <td>${appt.notes || '—'}</td>
+      <td><button class="btn-cancel" data-id="${appt.id}">إلغاء</button></td>
+    `;
+    tbody.appendChild(row);
+  });
+
+  document.querySelectorAll('.btn-cancel').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!confirm('هل أنت متأكد من إلغاء هذا الحجز؟')) return;
+      await fetch(`/api/admin/appointments/${btn.dataset.id}`, { method: 'DELETE' });
+      loadAppointments();
+    });
+  });
+}
+
+document.getElementById('logout-btn').addEventListener('click', async () => {
+  await fetch('/api/admin/logout', { method: 'POST' });
+  window.location.href = '/admin-login.html';
+});
+
+checkAuth();
+loadAppointments();
+</script>
+
+</body>
+</html>

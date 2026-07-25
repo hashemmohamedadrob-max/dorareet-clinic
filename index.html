@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>عيادة دوراريت | حجز المواعيد</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <div class="brand-text">
+        <span class="brand-name">عيادة دوراريت</span>
+        <span class="brand-sub">رعاية تليق بك</span>
+      </div>
+    </div>
+    <a href="#booking" class="btn-header">احجز موعدك</a>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero">
+    <span class="pearl-scatter" aria-hidden="true"></span>
+    <div class="container hero-inner">
+      <p class="eyebrow">حجز المواعيد الطبية إلكترونياً</p>
+      <h1>موعدك بين يديك<br><span>في دقيقة واحدة</span></h1>
+      <p class="hero-desc">اختر الطبيب المناسب، وحدد الوقت الذي يناسبك، ودعنا نهتم بالباقي. فريقنا الطبي جاهز لاستقبالك في أي وقت.</p>
+
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-num">+8</span>
+          <span class="stat-label">أطباء متخصصون</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">24/7</span>
+          <span class="stat-label">حجز متاح دائماً</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">+5</span>
+          <span class="stat-label">تخصصات طبية</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="booking" id="booking">
+    <div class="container booking-inner">
+
+      <div class="booking-intro">
+        <p class="eyebrow">احجز الآن</p>
+        <h2>أدخل بياناتك لتأكيد الموعد</h2>
+        <p>تصلك رسالة تأكيد فور اعتماد الحجز من العيادة، ولن يتكرر أي موعد لنفس الطبيب في نفس التوقيت.</p>
+
+        <ul class="doctors-preview">
+          <li><span class="dot"></span> د. ليان الأمين — طب الأسرة</li>
+          <li><span class="dot"></span> د. عمر التجاني — طب الأطفال</li>
+          <li><span class="dot"></span> د. سارة محجوب — الأمراض الجلدية</li>
+          <li><span class="dot"></span> د. خالد ياسين — جراحة العظام</li>
+        </ul>
+      </div>
+
+      <form class="booking-form" id="booking-form">
+        <div class="form-row">
+          <label for="patient-name">اسم المريض</label>
+          <input type="text" id="patient-name" name="patient-name" placeholder="مثال: محمد أحمد" required>
+        </div>
+
+        <div class="form-row">
+          <label for="phone">رقم الهاتف</label>
+          <input type="tel" id="phone" name="phone" placeholder="09xxxxxxxx" required>
+        </div>
+
+        <div class="form-row">
+          <label for="doctor">اختر الطبيب</label>
+          <select id="doctor" name="doctor" required>
+            <option value="" disabled selected>-- اختر الطبيب --</option>
+            <option value="layan-alamin">د. ليان الأمين — طب الأسرة</option>
+            <option value="omar-eltajani">د. عمر التجاني — طب الأطفال</option>
+            <option value="sara-mahjoub">د. سارة محجوب — الأمراض الجلدية</option>
+            <option value="khalid-yassin">د. خالد ياسين — جراحة العظام</option>
+          </select>
+        </div>
+
+        <div class="form-row two-col">
+          <div>
+            <label for="date">التاريخ</label>
+            <input type="date" id="date" name="date" required>
+          </div>
+          <div>
+            <label for="time">الوقت المتاح</label>
+            <select id="time" name="time" required>
+              <option value="" disabled selected>-- اختر الوقت --</option>
+              <option value="09:00">09:00 صباحاً</option>
+              <option value="10:00">10:00 صباحاً</option>
+              <option value="11:00">11:00 صباحاً</option>
+              <option value="12:00">12:00 ظهراً</option>
+              <option value="17:00">05:00 مساءً</option>
+              <option value="18:00">06:00 مساءً</option>
+              <option value="19:00">07:00 مساءً</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label for="notes">ملاحظات (اختياري)</label>
+          <textarea id="notes" name="notes" rows="3" placeholder="أي معلومات إضافية تود إخبارنا بها"></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit">تأكيد الحجز</button>
+        <p id="form-message" class="form-message" role="status"></p>
+        <p class="form-note">* لم يتم ربط الحجز بقاعدة البيانات بعد — البيانات تصل للسيرفر فقط الآن.</p>
+      </form>
+
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>عيادة دوراريت — جميع الحقوق محفوظة © 2026</p>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
