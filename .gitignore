@@ -1,4 +1,2 @@
-cp /home/claude/dorareet-clinic/.gitignore /mnt/user-data/outputs/dorareet-clinic/
-Output
-
-exit code 0
+node_modules/
+   .env
