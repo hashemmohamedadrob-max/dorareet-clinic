@@ -1,15 +1,8 @@
 // db.js
-// إعداد الاتصال بقاعدة بيانات عيادة دوراريت (Aiven MySQL السحابية)
+// إعداد الاتصال بقاعدة بيانات عيادة دوراريت (السحابية Aiven MySQL)
 
 require('dotenv').config();
 const mysql = require('mysql2/promise');
-
-// --- سطر تشخيصي مؤقت: سنحذفه بعد حل المشكلة ---
-console.log('🔍 DEBUG DB_HOST =', JSON.stringify(process.env.DB_HOST));
-console.log('🔍 DEBUG DB_PORT =', JSON.stringify(process.env.DB_PORT));
-console.log('🔍 DEBUG DB_USER =', JSON.stringify(process.env.DB_USER));
-console.log('🔍 DEBUG DB_NAME =', JSON.stringify(process.env.DB_NAME));
-// --- نهاية السطر التشخيصي ---
 
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
@@ -17,9 +10,9 @@ const pool = mysql.createPool({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  charset: 'utf8mb4_general_ci', // Aiven تدعم utf8mb4 بالكامل (نسخة MySQL حديثة)
+  charset: 'utf8mb4_general_ci', // نسخة MySQL الحديثة تدعم utf8mb4 بالكامل
   ssl: {
-    rejectUnauthorized: false // يفعّل الاتصال المشفّر المطلوب من Aiven
+    rejectUnauthorized: false // يفعل الاتصال المشفر المطلوب من Aiven
   },
   waitForConnections: true,
   connectionLimit: 10
